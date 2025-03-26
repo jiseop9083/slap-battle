@@ -1,4 +1,4 @@
-import { NFTToken } from '@/types/wallet';
+import { NFToken } from '@/types/wallet';
 import { Client as xrplClient, convertHexToString, LedgerIndex } from 'xrpl';
 
 /**
@@ -9,14 +9,14 @@ import { Client as xrplClient, convertHexToString, LedgerIndex } from 'xrpl';
  * @param {LedgerIndex} ledger_index - (Optional) The ledger index of the ledger to use, or a shortcut string to choose a ledger automatically
  * @param {number} limit - (Optional) Limit the number of NFT sell offers to retrieve. This value cannot be lower than 50 or more than 500. Positive values outside this range are replaced with the closest valid option. The default is 250.
 
- * @return {Promise<NFTToken[]>} A promise that resolves to an array of tokens.
+ * @return {Promise<NFToken[]>} A promise that resolves to an array of tokens.
  */
-export const getNftTokens = async (
+export const getNftokens = async (
   client: xrplClient,
   address: string,
   ledger_index?: LedgerIndex,
   limit?: number,
-): Promise<NFTToken[]> => {
+): Promise<NFToken[]> => {
   await client.connect();
 
   // TODO: data is paginated, request must be sent multiple times using the  marker field (nfts.result.marker) - rate limited
@@ -27,7 +27,7 @@ export const getNftTokens = async (
     limit: limit,
   });
 
-  const nftTokens: NFTToken[] = nfts.result.account_nfts.map((nft) => {
+  const nftokens: NFToken[] = nfts.result.account_nfts.map((nft) => {
     return {
       flags: nft.Flags,
       id: nft.NFTokenID,
@@ -37,5 +37,5 @@ export const getNftTokens = async (
     };
   });
 
-  return nftTokens;
+  return nftokens;
 };

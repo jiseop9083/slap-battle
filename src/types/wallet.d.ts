@@ -6,7 +6,7 @@ type Currency = {
   currency: string;
 };
 
-type NFTToken = {
+type NFToken = {
   flags: number;
   issuer: string;
   id: string;
