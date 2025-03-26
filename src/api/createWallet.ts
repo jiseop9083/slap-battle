@@ -1,5 +1,5 @@
 import { Wallet, Client as xrplClient, Wallet as xrplWallet } from 'xrpl';
-import { getNftTokens } from '@/api/requests/getNFTTokens';
+import { getNFTokens } from '@/api/requests/getNFTokens';
 import { OfferStore, WalletInitialState } from '@/types/wallet';
 import { getBalances } from '@/api/requests/getBalances';
 
@@ -58,7 +58,7 @@ export const getInitialWalletState = async (
     client,
     address,
   );
-  const initialTokens = await getNftTokens(client, address);
+  const initialTokens = await getNFTokens(client, address);
 
   const initialBuyOffers: OfferStore = {};
   const initialSellOffers: OfferStore = {};

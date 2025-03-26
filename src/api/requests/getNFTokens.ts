@@ -11,7 +11,7 @@ import { Client as xrplClient, convertHexToString, LedgerIndex } from 'xrpl';
 
  * @return {Promise<NFToken[]>} A promise that resolves to an array of tokens.
  */
-export const getNftokens = async (
+export const getNFTokens = async (
   client: xrplClient,
   address: string,
   ledger_index?: LedgerIndex,
