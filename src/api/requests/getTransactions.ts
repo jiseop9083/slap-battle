@@ -54,7 +54,7 @@ export const processTransactions = (accountTxResponse: AccountTxResponse) => {
   for (const entry of allEntries) {
     const tx = entry.transaction.tx_json;
 
-    // console.log(entry.account, 'parsing tx: ', entry);
+    console.debug(entry.account, 'parsing tx: ', entry);
 
     if (
       tx?.TransactionType === 'NFTokenCreateOffer' &&

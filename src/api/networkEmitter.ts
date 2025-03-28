@@ -350,7 +350,7 @@ export class NetworkEmitter {
    * @param {xrplClient} client - The XRPL client to use for network communication.
    */
   constructor(client: xrplClient) {
-    console.log('constructing new network emitter...');
+    console.debug('constructing new network emitter...');
 
     this._addressEvents = new Map<string, AddressEvents>();
     this._client = client;
@@ -363,7 +363,7 @@ export class NetworkEmitter {
    */
   public async start(): Promise<void> {
     if (!this._eventsEnabled) {
-      console.log('starting transaction stream...');
+      console.debug('starting transaction stream...');
       this._client.on('transaction', this.onTransaction);
 
       this._eventsEnabled = true;
@@ -377,7 +377,7 @@ export class NetworkEmitter {
    */
   public async stop(): Promise<void> {
     if (this._eventsEnabled) {
-      console.log('stopping transaction stream...');
+      console.debug('stopping transaction stream...');
       this._client.off('transaction', this.onTransaction);
 
       this._eventsEnabled = false;
@@ -453,7 +453,7 @@ export class NetworkEmitter {
     // TODO: use meta and AffectedNodes to check final balances on payments/tokens/currencies?
 
     if (tx.engine_result !== 'tesSUCCESS') {
-      console.log('transaction failed');
+      console.debug('transaction failed');
       console.groupEnd();
       return;
     }
@@ -462,7 +462,7 @@ export class NetworkEmitter {
       const events = this._addressEvents.get(tx.tx_json.Account);
 
       if (events) {
-        console.log(tx.tx_json.Account, ' minted a token: ', tx);
+        console.debug(tx.tx_json.Account, ' minted a token: ', tx);
 
         if (tx.meta) {
           events.emitter.emit(
@@ -480,7 +480,7 @@ export class NetworkEmitter {
       const events = this._addressEvents.get(tx.tx_json.Account);
 
       if (events) {
-        console.log(txJson.Account, ' burned a token: ', tx);
+        console.debug(txJson.Account, ' burned a token: ', tx);
 
         if (tx.meta) {
           events.emitter.emit(
@@ -499,7 +499,7 @@ export class NetworkEmitter {
       const sourceEvents = this._addressEvents.get(txJson.Account);
 
       if (destinationEvents) {
-        console.log(txJson.Destination, ' received payment: ', tx);
+        console.debug(txJson.Destination, ' received payment: ', tx);
 
         if (isIssuedCurrency(txJson.Amount)) {
           destinationEvents.emitter.emit(WalletEvents.CurrencyChange);
@@ -523,7 +523,7 @@ export class NetworkEmitter {
       }
 
       if (sourceEvents) {
-        console.log(txJson.Account, ' sent payment: ', tx);
+        console.debug(txJson.Account, ' sent payment: ', tx);
 
         if (isIssuedCurrency(txJson.Amount)) {
           sourceEvents.emitter.emit(WalletEvents.CurrencyChange);
@@ -560,19 +560,19 @@ export class NetworkEmitter {
         accounts.push(txJson.Account);
       }
 
-      console.log(accounts);
+      console.debug(accounts);
 
       for (const account of accounts) {
         const events = this._addressEvents.get(account);
 
         if (events) {
           if (txJson.NFTokenSellOffer) {
-            console.log(account, ' accepted a sell offer: ', tx);
+            console.debug(account, ' accepted a sell offer: ', tx);
             const ledgerIndex = findLedgerIndexForAcceptedOffer(
               tx.meta?.AffectedNodes || [],
             );
             // TODO remove unused code
-            console.log(ledgerIndex);
+            console.debug(ledgerIndex);
 
             const tokenId = findNFTokenIDForOffer(
               txJson.NFTokenSellOffer,
@@ -590,12 +590,12 @@ export class NetworkEmitter {
 
           if (tx.tx_json?.NFTokenBuyOffer) {
             const txJson = tx.tx_json;
-            console.log(account, ' accepted a buy offer: ', tx);
+            console.debug(account, ' accepted a buy offer: ', tx);
             const ledgerIndex = findLedgerIndexForAcceptedOffer(
               tx.meta?.AffectedNodes || [],
             );
             // TODO remove unused code
-            console.log(ledgerIndex);
+            console.debug(ledgerIndex);
 
             const tokenId = findNFTokenIDForOffer(
               tx.tx_json.NFTokenBuyOffer,
@@ -713,6 +713,6 @@ export class NetworkEmitter {
  * @param {xrplClient} client - The xrplClient to be used by the NetworkEmitter.
  * @return {NetworkEmitter} A new instance of NetworkEmitter.
  */
-export const createNetworkEmitter = (client: xrplClient) => {
+export const createNetworkEmitter = (client: xrplClient): NetworkEmitter => {
   return new NetworkEmitter(client);
 };
