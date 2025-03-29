@@ -10,21 +10,25 @@ import { NFTokenMintMetadata } from 'xrpl/dist/npm/models/transactions/NFTokenMi
  *
  * @param {Client} client - The XRPL client used to make the request.
  * @param {string} account - The account for which to retrieve transactions.
- * @param {number} [limit] - The maximum number of transactions to retrieve. Default is no limit.
+ * @param {Object} options - Optional parameters to specify the ledger to query.
+ * @param {number} [options.ledger_index] - The ledger index of the ledger to use, or a shortcut string to choose a ledger automatically
+ * @param {number} [options.limit] - The maximum number of transactions to retrieve. Default is no limit.
  * @return {Promise<AccountTxResponse>} A promise that resolves to the response containing the list of transactions.
  */
 export const getTransactionsByAccount = async (
   client: Client,
   account: string,
-  ledger_index?: LedgerIndex,
-  limit?: number,
+  options?: {
+    ledger_index?: LedgerIndex;
+    limit?: number;
+  },
 ): Promise<AccountTxResponse> => {
   const accountTxResponse = await client.request({
     command: 'account_tx',
     account,
     ledger_index_max: -1,
-    ledger_index,
-    limit,
+    ledger_index: options?.ledger_index,
+    limit: options?.limit,
   });
 
   return accountTxResponse;
@@ -36,15 +40,23 @@ export const getTransactionsByAccount = async (
  * @param {AccountTxResponse} accountTxResponse - The response containing transactions.
  * @return {TransactionLogEntry[]} An array of categorized transaction log entries.
  */
-export const processTransactions = (accountTxResponse: AccountTxResponse) => {
+export const processTransactions = (
+  accountTxResponse: AccountTxResponse | AccountTxResponse[],
+): TransactionLogEntry[] => {
   const initialTransactions: TransactionLogEntry[] = [];
 
-  // Sort the transactions by the 'date' property
-  const allEntries = accountTxResponse.result.transactions
-    .map((tx) => ({
-      account: accountTxResponse.result.account,
-      transaction: tx,
-    }))
+  const responses = Array.isArray(accountTxResponse)
+    ? accountTxResponse
+    : [accountTxResponse];
+
+  // Flatten all transactions and sort the transactions by the 'date' property
+  const allEntries = responses
+    .flatMap((resp) =>
+      resp.result.transactions.map((tx) => ({
+        account: resp.result.account,
+        transaction: tx,
+      })),
+    )
     .sort((a, b) => {
       const dateA = a.transaction.tx_json?.date ?? 0;
       const dateB = b.transaction.tx_json?.date ?? 0;
