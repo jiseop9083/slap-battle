@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@layer components {
+  /* App */
+  .card {
+    @apply w-full mx-auto mb-4 md:p-8 md:rounded-lg md:shadow-lg bg-white mt-4 px-4 md:mt-0;
+  }
+}
+
+.no-drag {
+  -webkit-user-select: none; /* for Safari */
+  -moz-user-select: none; /* for Firefox */
+  -ms-user-select: none; /* for Internet Explorer */
+  user-select: none; /* Standard syntax */
+}
+
+.button-info {
+  @apply bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded;
+}
