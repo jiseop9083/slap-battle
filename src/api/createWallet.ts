@@ -9,11 +9,11 @@ import { getBalances } from '@/api/requests/getBalances';
  * @param {string} [seed] - (Optional) The seed used to create the wallet.
  * @return {Wallet} The created wallet.
  */
+// recommend to use at MAIN_NET
 export const createWallet = (seed?: string): Wallet => {
   if (seed) {
     return xrplWallet.fromSeed(seed);
   }
-
   return xrplWallet.generate();
 };
 

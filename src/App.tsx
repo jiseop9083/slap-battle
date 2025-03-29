@@ -1,35 +1,41 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import { useClientStore } from '@/store/clientStore';
+import '@/style/index.css';
+import { CreateSourceWallet } from '@/components/wallet/CreateSourceWallet';
+import { SourceWallet } from '@/components/wallet/SourceWallet';
+import { NETWORKS } from '@/xrpl/constants';
+import { XRPLClient } from '@/xrpl/client/XRPLClient';
+import { ChargeMoney } from '@/components/wallet/charge/ChargeMoney';
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const MainApp = () => {
+  // The useIsConnected hook will let you know
+  // when the client has connected to the xrpl network
+  const isConnected = useClientStore((state) => state.isConnected);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="MainApp">
+      <div>Connected: {isConnected ? 'Yes' : 'No'}</div>
+      <ChargeMoney />
+      <div className="m-auto">
+        <CreateSourceWallet>
+          <SourceWallet />
+        </CreateSourceWallet>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      {/* <div className="WalletWrapper">
+          <CreateDestinationWallet>
+            <DestinationWallet />
+          </CreateDestinationWallet>
+        </div> */}
+    </div>
   );
-}
+};
+
+const App = () => {
+  return (
+    <div className="App">
+      <XRPLClient network={NETWORKS.TESTNET}>
+        <MainApp />
+      </XRPLClient>
+    </div>
+  );
+};
 
 export default App;
