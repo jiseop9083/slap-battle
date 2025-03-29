@@ -7,7 +7,6 @@ type State = {
   isConnected: boolean;
   client: xrplClient | null;
   networkEmitter: NetworkEmitter | null;
-  isOnEvent: boolean;
 };
 
 type Action = {
@@ -21,13 +20,6 @@ export const useClientStore = createStore<Store>((set) => ({
   isConnected: false,
   client: null,
   networkEmitter: null,
-  isOnEvent: false,
-  // Wallet
-  balance: '',
-  buyOffersByTokenId: {},
-  sellOffersByTokenId: {},
-  currencies: [],
-  nftokens: [],
   setIsConnected: (isConnected) => set({ isConnected: isConnected }),
   setClient: (client) => set({ client: client }),
   setNetworkEmitter: (networkEmitter) =>

@@ -8,7 +8,7 @@ type State = {
   networkEmitter: NetworkEmitter | null;
   isOnEvent: boolean;
   // Wallet
-  balance: string;
+  balance: number;
 };
 
 type Action = {
@@ -28,7 +28,7 @@ export const useBalanceStore = createStore<Store>((set, get) => ({
   networkEmitter: null,
   isOnEvent: false,
   // Wallet
-  balance: '',
+  balance: 0,
   setClient: (client) => set({ client: client }),
   setNetworkEmitter: (networkEmitter) =>
     set({ networkEmitter: networkEmitter }),
@@ -37,9 +37,12 @@ export const useBalanceStore = createStore<Store>((set, get) => ({
   // fuctions for Wallet
   fetchBalance: async (address) => {
     const client = get().client;
+    console.log(client, address, 'cccccc');
     if (!client) return '';
     const [balance] = await getBalances(client, address);
-    set({ balance: balance });
+    console.log(balance, 'balsdjfl');
+    const bal = parseInt(balance, 10);
+    set({ balance: isNaN(bal) ? 0 : bal });
     return balance;
   },
   enableEvents: (address) => {
@@ -52,7 +55,8 @@ export const useBalanceStore = createStore<Store>((set, get) => ({
     console.debug('added balance listener for ', address);
 
     const _changeBalance = (drop: string, xrp: number) => {
-      set({ balance: `${xrp}` });
+      console.log('ddddd');
+      set({ balance: xrp });
     };
 
     if (networkEmitter) {
